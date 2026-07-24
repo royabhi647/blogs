@@ -1,0 +1,126 @@
+---
+title: "React Interview Questions: The Ultimate 2026 Guide"
+date: "2026-07-24"
+summary: "Ace your next frontend interview with this comprehensive list of React questions, from state batching to fiber architecture and hooks rules."
+category: "React"
+featured: true
+---
+
+React continues to dominate frontend web development. In 2026, technical interviews go far beyond simple questions about components or props. Interviewers expect a deep, conceptual understanding of React's internals, hooks, rendering behavior, and modern additions.
+
+Here are the most critical React interview questions you should be prepared to answer.
+
+---
+
+### 1. How does React's Virtual DOM work under the hood?
+
+The Virtual DOM (VDOM) is an in-memory representation of the real DOM elements. When a component's state or props change, React creates a new VDOM tree and compares it with the previous one. This process is called **Reconciliation**.
+
+React uses a diffing algorithm to compare the two trees:
+1. **Elements of different types:** React tears down the old tree and builds the new tree from scratch.
+2. **Elements of the same type:** React compares the attributes, updates only the changed attributes, and then recurses on the children.
+3. **Recursing on children:** When recursing on the children of a DOM node, React matches them using the `key` prop.
+
+```javascript
+// Example of React element structure (Virtual DOM Node)
+{
+  type: 'div',
+  props: {
+    className: 'container',
+    children: [
+      { type: 'h1', props: { children: 'Hello World' } }
+    ]
+  }
+}
+```
+
+---
+
+### 2. What is State Batching, and how does it work?
+
+State batching is React's way of grouping multiple state updates into a single re-render for better performance. 
+
+In React 18 and 19, **Automatic Batching** is enabled by default. This means state updates inside promises, timeouts, native event handlers, or any other events are batched together.
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0);
+  const [flag, setFlag] = useState(false);
+
+  function handleClick() {
+    // Only triggers 1 re-render!
+    setCount(c => c + 1);
+    setFlag(f => !f);
+  }
+
+  return (
+    <button onClick={handleClick}>Click me</button>
+  );
+}
+```
+
+If you need to force React to update the DOM immediately, you can wrap the state updates in `flushSync`, though this is generally discouraged for performance reasons:
+
+```jsx
+import { flushSync } from 'react-dom';
+
+flushSync(() => {
+  setCount(c => c + 1);
+});
+// DOM is updated here
+flushSync(() => {
+  setFlag(f => !f);
+});
+// DOM is updated here again
+```
+
+---
+
+### 3. Explain the Rules of Hooks and why they are necessary
+
+Hooks are JavaScript functions, but they impose two strict rules:
+1. **Only Call Hooks at the Top Level:** Don't call Hooks inside loops, conditions, or nested functions. Always use Hooks at the top level of your React function, before any early returns.
+2. **Only Call Hooks from React Functions:** Don't call Hooks from regular JavaScript functions. Instead, call them from React function components or custom Hooks.
+
+#### Why these rules exist:
+Under the hood, React relies on the **order** in which Hooks are called. React associates state and effect hook calls with their corresponding components by keeping an internal array of hook slots. If we put a hook inside an `if` block:
+
+```javascript
+// ❌ BAD: Hook inside a conditional
+if (condition) {
+  useEffect(() => { ... }, []);
+}
+```
+
+If `condition` changes to false on a subsequent render, the hook order shifts, causing React to mismatch the state of all subsequent hooks!
+
+---
+
+### 4. What is the difference between `useMemo` and `useCallback`?
+
+Both hooks are used for optimization, but they return different things:
+
+*   `useMemo` memoizes the **result value** of a function call. It only recalculates the value when one of its dependencies changes.
+*   `useCallback` memoizes the **function definition itself** between renders. It is equivalent to `useMemo(() => fn, deps)`.
+
+```jsx
+// useMemo: Memoizes a calculated value
+const expensiveValue = useMemo(() => {
+  return calculateHeavyData(data);
+}, [data]);
+
+// useCallback: Memoizes a callback function
+const handleIncrement = useCallback(() => {
+  setCount((prev) => prev + 1);
+}, []);
+```
+
+Use `useCallback` when passing callbacks to optimized child components that rely on reference equality (`React.memo`) to prevent unnecessary renders.
+
+---
+
+### Summary
+To stand out in your interviews:
+*   Focus on *why* React behaves the way it does, not just *how*.
+*   Understand the mechanics of rendering and state updates.
+*   Practice explaining these concepts in clear, developer-friendly terms.

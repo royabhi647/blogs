@@ -1,0 +1,99 @@
+.mdxContent {
+  color: #e2e8f0;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+.mdxContent h1,
+.mdxContent h2,
+.mdxContent h3,
+.mdxContent h4 {
+  color: var(--text-primary);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mdxContent h1 {
+  font-size: 2.2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.mdxContent h2 {
+  font-size: 1.75rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.4rem;
+}
+
+.mdxContent h3 {
+  font-size: 1.4rem;
+}
+
+.mdxContent p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.mdxContent a {
+  color: var(--primary-accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 500;
+}
+
+.mdxContent a:hover {
+  color: var(--secondary-accent);
+}
+
+.mdxContent ul,
+.mdxContent ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.75rem;
+  color: var(--text-secondary);
+}
+
+.mdxContent li {
+  margin-bottom: 0.5rem;
+}
+
+.mdxContent blockquote {
+  border-left: 4px solid var(--primary-accent);
+  background-color: var(--bg-secondary);
+  padding: 1.25rem 1.75rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+
+.mdxContent blockquote p {
+  margin-bottom: 0;
+  color: var(--text-primary);
+}
+
+/* Inline code snippet */
+.mdxContent code:not(pre code) {
+  background-color: var(--bg-tertiary);
+  color: #f43f5e;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+}
+
+.mdxContent hr {
+  border: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 2.5rem 0;
+}
+
+.mdxContent img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border-color);
+}

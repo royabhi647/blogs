@@ -1,0 +1,183 @@
+---
+title: "Mastering SEO in Next.js App Router"
+date: "2026-07-20"
+summary: "Learn how to optimize your Next.js applications for search engines using metadata API, dynamic sitemaps, and structured JSON-LD schemas."
+category: "Next.js"
+featured: false
+---
+
+SEO (Search Engine Optimization) is the lifeblood of blogs. No matter how high-quality your content is, if search engines can't discover, crawl, and index it, you won't get organic traffic.
+
+Next.js provides excellent out-of-the-box SEO capabilities. In this guide, we will look at how to master SEO using the App Router.
+
+---
+
+### 1. The Metadata API
+
+Next.js has a built-in Metadata API that allows you to configure your page HTML `<head>` tags. You can define metadata in layout or page files either statically or dynamically.
+
+#### Static Metadata
+
+For static pages, you can export a `Metadata` object:
+
+```tsx
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Code With Abhishek | Modern Tech Blog',
+  description: 'Learn React, Next.js, and modern frontend technologies.',
+  openGraph: {
+    title: 'Code With Abhishek',
+    description: 'Learn React, Next.js, and modern frontend technologies.',
+    url: 'https://codewithabhishek.in',
+    siteName: 'Code With Abhishek',
+    images: [
+      {
+        url: 'https://codewithabhishek.in/og-image.jpg',
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+};
+```
+
+#### Dynamic Metadata
+
+For dynamic routes (such as blog posts), you can export a `generateMetadata` function. **Remember: in Next.js 15+, the `params` parameter is a Promise!**
+
+```tsx
+import type { Metadata } from 'next';
+
+type Props = {
+  params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // read route params
+  const { slug } = await params;
+
+  // fetch data
+  const post = await getPost(slug);
+
+  return {
+    title: `${post.title} | Code With Abhishek`,
+    description: post.summary,
+    openGraph: {
+      title: post.title,
+      description: post.summary,
+      type: 'article',
+      publishedTime: post.date,
+      authors: ['Abhishek Kumar'],
+    },
+  };
+}
+```
+
+---
+
+### 2. Structured Data (JSON-LD)
+
+JSON-LD (JavaScript Object Notation for Linked Data) helps search engines understand the structured content of your page. For a blog post, adding the `BlogPosting` or `Article` schema is highly recommended.
+
+You can render JSON-LD as a script tag inside your component:
+
+```tsx
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPost(slug);
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.summary,
+    datePublished: post.date,
+    author: {
+      '@type': 'Person',
+      name: 'Abhishek Kumar',
+      url: 'https://codewithabhishek.in/about',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Code With Abhishek',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://codewithabhishek.in/logo.png',
+      },
+    },
+  };
+
+  return (
+    <section>
+      {/* Add JSON-LD to your page */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <h1>{post.title}</h1>
+      {/* Article Content */}
+    </section>
+  );
+}
+```
+
+---
+
+### 3. Dynamic Sitemaps (`sitemap.ts`)
+
+Next.js provides a special file convention `sitemap.js` or `sitemap.ts` to automatically generate sitemaps. 
+
+Create a file `src/app/sitemap.ts`:
+
+```typescript
+import { MetadataRoute } from 'next';
+import { getAllPosts } from '@/lib/posts';
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = getAllPosts();
+  
+  const blogUrls = posts.map((post) => ({
+    url: `https://codewithabhishek.in/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
+  const routes = ['', '/about', '/contact'].map((route) => ({
+    url: `https://codewithabhishek.in${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 1.0,
+  }));
+
+  return [...routes, ...blogUrls];
+}
+```
+
+This will automatically serve an XML sitemap at `https://yourdomain.com/sitemap.xml`.
+
+---
+
+### 4. Robots.txt (`robots.ts`)
+
+Similarly, you can configure robots crawling parameters using a special `robots.ts` file in `src/app/robots.ts`:
+
+```typescript
+import { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: '/private/',
+    },
+    sitemap: 'https://codewithabhishek.in/sitemap.xml',
+  };
+}
+```
+
+By using Next.js Metadata API, JSON-LD schemas, sitemaps, and robots configurations, your website will be ready to rank on the first page of search results!
