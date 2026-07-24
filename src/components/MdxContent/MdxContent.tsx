@@ -5,6 +5,10 @@ import styles from "./MdxContent.module.css";
 // Map custom markdown components
 const mdxComponents = {
   pre: CodeBlock,
+  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img {...props} loading="lazy" decoding="async" alt={props.alt || "DevScale article image"} />
+  ),
 };
 
 interface MdxContentProps {

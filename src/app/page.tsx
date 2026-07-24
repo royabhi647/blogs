@@ -12,8 +12,26 @@ export default function Home() {
   // Find featured posts
   const featuredPosts = posts.filter((post) => post.featured).slice(0, 2);
 
+  // Structured Data (JSON-LD)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": siteConfig.name,
+    "url": siteConfig.url,
+    "description": siteConfig.description,
+    "author": {
+      "@type": "Person",
+      "name": siteConfig.author.name,
+    },
+  };
+
   return (
     <div className={styles.main}>
+      {/* Website JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero Section */}
       <section className={styles.hero}>
         <div className={`container ${styles.heroContent}`}>

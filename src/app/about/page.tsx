@@ -19,8 +19,26 @@ export default function AboutPage() {
     { title: "AI Tooling", desc: "Agentic coding integrations, productivity workflows" },
   ];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": siteConfig.author.name,
+    "jobTitle": siteConfig.author.role,
+    "url": `${siteConfig.url}/about`,
+    "sameAs": [
+      siteConfig.author.github,
+      siteConfig.author.linkedin,
+      siteConfig.author.twitter,
+    ],
+  };
+
   return (
     <div className={styles.container}>
+      {/* Person JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Profile Section */}
       <section className={styles.profileSection}>
         <div className={styles.avatarWrapper}>
